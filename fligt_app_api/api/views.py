@@ -5,7 +5,7 @@ from rest_framework.exceptions import NotFound
 
 from django.http import HttpResponse
 
-from .serializers import LunarMissionSerializer
+from .serializers import LunarMissionSerializer, WatermarkTextSerializer
 from .models import LunarMission
 
 
@@ -168,64 +168,4 @@ class LunarMissionDetailView(APIView):
         return Response(
             {"data": {"code": 200, "message": "Миссия удалена"}},
             status=status.HTTP_204_NO_CONTENT
-        )
-
-
-class LunarWatermarkTextView(APIView):
-    def post(self, request):
-        serializer = WatermarkTextSerializer(data=request.data)
-
-        if serializer.is_valid():
-            fileimage = serializer.validated_data['fileimage']
-            message = serializer.validated_data['message']
-
-            # Проверка размера файла (не более 5 MB)
-            if fileimage.size > 5 * 1024 * 1024:
-                return Response(
-                    {"error": {"code": 413, "message": "Файл слишком большой"}},
-                    status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE
-                )
-
-            # Открытие изображения
-            image = Image.open(fileimage)
-
-            # Подготовка для добавления текста водяного знака
-            draw = ImageDraw.Draw(image)
-
-            # Выбор шрифта. Можно использовать стандартный шрифт, например, Arial.
-            try:
-                font = ImageFont.truetype("arial.ttf", 40)  # Шрифт Arial, размер 40
-            except IOError:
-                font = ImageFont.load_default()  # Если не удалось загрузить, используем стандартный шрифт
-
-            # Вычисление размеров текста
-            text_width, text_height = draw.textsize(message, font=font)
-
-            # Позиция для водяного знака (по центру внизу)
-            position = ((image.width - text_width) // 2, image.height - text_height - 10)
-
-            # Цвет текста (например, полупрозрачный белый)
-            text_color = (255, 255, 255, 128)  # RGBA (белый с полупрозрачностью)
-
-            # Добавление текста на изображение
-            draw.text(position, message, font=font, fill=text_color)
-
-            # Сохраняем изображение с водяным знаком в память
-            img_io = io.BytesIO()
-            image.save(img_io, 'JPEG')
-            img_io.seek(0)
-
-            # Отправляем изображение с водяным знаком в ответ
-            response = HttpResponse(img_io, content_type="image/jpeg")
-            return response
-
-        return Response(
-            {
-                "error": {
-                    "code": 422,
-                    "message": "Ошибка валидации",
-                    "errors": serializer.errors
-                }
-            },
-            status=status.HTTP_422_UNPROCESSABLE_ENTITY
         )

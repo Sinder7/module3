@@ -1,43 +1,8 @@
 {
-  "mission": {
-    "name": "Аполлон-01",
-    "launch_details": {
-      "launch_date": "1970-11-07",
-      "launch_site": {
-        "name": "Космический центр имени Кеннеди11",
-        "location": {
-          "latitude": 28.1723,
-          "longitude": -80.628
-        }
-      }
-    },
-    "landing_details": {
-      "landing_date": "1970-12-19",
-      "landing_site": {
-        "name": "Телец-Литтров1",
-        "coordinates": {
-          "latitude": 20.1902,
-          "longitude": 30.7711
-        }
-      }
-    },
-    "spacecraft": {
-      "command_module": "Америка_1",
-      "lunar_module": "Челленджер1",
-      "crew": [
-        {
-          "name": "Евгений Сернан1",
-          "role": "Сержант"
-        },
-        {
-          "name": "Харрисон Шмитт1",
-          "role": "Пилот лунного модуля 2"
-        },
-        {
-          "name": "Рональд Эванс1",
-          "role": "Пилот командного модуля 3"
-        }
-      ]
-    }
-  }
+  "first_name": "Alexey",
+  "last_name": "Smirnov",
+  "patronymic": "Ivanovich",
+  "email": "user@prof.ru",
+  "password": "paSSword1",
+  "birth_date": "2001-02-15"
 }

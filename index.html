@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Космические рейсы</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .no-seats {
+            color: red;
+            font-weight: bold;
+        }
+
+        .error {
+            color: red;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Космические рейсы</h1>
+    <div id="loading">Загрузка...</div>
+    <div id="error" class="error" style="display: none;"></div>
+    <table id="flights-table" border="1" cellspacing="0" cellpadding="5" style="display: none;">
+        <thead>
+            <tr>
+                <th>Номер рейса</th>
+                <th>Пункт назначения</th>
+                <th>Дата вылета</th>
+                <th>Свободные места</th>
+            </tr>
+        </thead>
+        <tbody id="flights-body"></tbody>
+    </table>
+
+    <script>
+        fetch("http://127.0.0.1:8000/api/gagarin-flight")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("loading").style.display = "none";
+
+                if (!data.data || data.data.length === 0) {
+                    document.getElementById("error").textContent = "Нет доступных рейсов.";
+                    document.getElementById("error").style.display = "block";
+                    return;
+                }
+
+                const tbody = document.getElementById("flights-body");
+                data.data.forEach(flight => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${flight.flight_number}</td>
+                        <td>${flight.destination}</td>
+                        <td>${flight.launch_date}</td>
+                        <td class="${flight.seats_available === 0 ? 'no-seats' : ''}">
+                            ${flight.seats_available}
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                document.getElementById("flights-table").style.display = "table";
+            })
+            .catch(() => {
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("error").textContent = "Ошибка загрузки данных.";
+                document.getElementById("error").style.display = "block";
+            });
+    </script>
+
+</body>
+
+</html>
